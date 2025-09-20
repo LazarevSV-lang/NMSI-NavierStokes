@@ -1,0 +1,30 @@
+# ✅ Community PR Checklist
+
+## 📂 Files
+- [ ] Uploaded config file used (`config.yaml` or `config_custom.yaml`)
+- [ ] Uploaded raw results (`final_timeseries.npz` / `.csv`)
+- [ ] Uploaded snapshots (`snap_XXXXXX.npz`) if spectrum computed
+- [ ] Uploaded plots (`E_vs_t.png`, `Enstrophy_vs_t.png`, `Spectrum_Ek.png`)
+
+## 📊 Plots
+- [ ] Energy E(t)
+- [ ] Enstrophy Ω(t)
+- [ ] Max vorticity ‖ω‖∞
+- [ ] Energy spectrum E(k)
+
+## ⚙️ Run description
+- Grid size: …
+- Reynolds number ν = …
+- Forcing params: A_pi = …, k1–k2 = …, omega_pi = …
+- Dissipation params: γ0 = …, ωZ = …, ζ = …
+- Compare mode: augmented / classical
+
+## 📌 Observations
+- Time of blow-up (classical NSE)
+- Stability in augmented run
+- Inertial range scaling (−5/3 slope?)
+- Any anomalies
+
+## 🧾 Citation
+Lazarev, S. V. (2025). *Solving the Millennium Problem — Navier–Stokes Regularity Under the Poincaré–Perelman_NMSI_π*–HDQG Framework.*  
+Zenodo. https://doi.org/10.5281/zenodo.17163066
