@@ -1,0 +1,5 @@
+# In nmsi_nse3d_tg_SSPRK3.py, inside the time loop (after istep update)
+# Add periodic Fourier snapshot saving for spectra analysis:
+if istep % 200 == 0:  # snapshot interval
+    np.savez(os.path.join(outdir, f'snap_{istep:06d}.npz'),
+             uhat=uhat, KX=KX, KY=KY, KZ=KZ)
