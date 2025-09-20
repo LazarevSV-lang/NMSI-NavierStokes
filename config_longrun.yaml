@@ -1,0 +1,43 @@
+grid:
+  nx: 96
+  ny: 96
+  nz: 96
+  Lx: 6.283185307
+  Ly: 6.283185307
+  Lz: 6.283185307
+
+time:
+  t_end: 20.0
+  cfl: 0.3
+  dt_min: 1.0e-4
+  dt_max: 2.0e-2
+  save_every: 20
+
+physics:
+  nu: 5.0e-4
+
+forcing_pi:
+  use: true
+  A_pi: 0.15
+  omega_pi: 4.0
+  phi: 0.0
+  k1: 4.0
+  k2: 8.0
+  bandpass: true
+
+gamma_diss:
+  use: true
+  gamma0: 0.08
+  omega_Z: 2.0
+  phiZ: 0.0
+  zeta: -0.2
+  spatial_mask: false
+
+dealias:
+  use: true
+
+io:
+  outdir: ./out_3d_long
+
+compare_mode:
+  classical: false

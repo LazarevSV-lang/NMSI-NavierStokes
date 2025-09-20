@@ -1,0 +1,32 @@
+*** nmsi_nse3d_tg.py	(original)
+--- nmsi_nse3d_tg.py	(SSPRK3-upgraded)
+***************
+*** 1,12 ****
+- # forward Euler, rectangular dealias, no energy budget, no compare_mode
+---
++ # SSPRK3, spherical 2/3 dealias, energy budget, compare_mode.classical
+***************
+*** 60,85 ****
+- mask = rectangular_dealias(nx, ny, nz, use=dealias_use)
++ mask, Kmag = spherical_dealias(KX, KY, KZ, frac=2/3) if dealias_use else (np.ones((nx,ny,nz)), np.sqrt(K2))
+***************
+*** 120,165 ****
+- # Forward Euler
+- rhs = -(conv_hat) + visc_hat + Fhat + gamma_hat
+- rhs = helmholtz_project(KX, KY, KZ, rhs); rhs *= mask
+- uhat = uhat + dt * rhs
++ # SSPRK3
++ rhs1, gamma_t1 = RHS(uhat, t)
++ uh1 = uhat + dt*rhs1
++ rhs2, gamma_t2 = RHS(uh1, t+dt)
++ uh2 = 0.75*uhat + 0.25*(uh1 + dt*rhs2)
++ rhs3, gamma_t3 = RHS(uh2, t+0.5*dt)
++ uhat = (1/3)*uhat + (2/3)*(uh2 + dt*rhs3)
++ uhat *= mask
+***************
+*** 166,190 ****
+- # no energy budget
++ # energy budget diagnostics
++ eps_nu = nu * mean(|∇u|^2)
++ eps_gamma = gamma_t * mean(|u|^2)
++ inj_pi = A_pi cos(ω_pi t + φ) mean(|u|^2)
