@@ -1,49 +1,33 @@
-# 🧮 NMSI Diagnostics Notebook
+# 📊 NMSI Diagnostics Demo Package
 
-This Jupyter notebook provides ready-to-use diagnostics for simulations under the  
-**NMSI–π*–HDQG augmented Navier–Stokes framework**.
+This package contains a **Jupyter notebook** and a **synthetic demo dataset** for testing the  
+NMSI–π*–HDQG augmented Navier–Stokes framework.
 
-## 📌 Features
-- Compare **Classical NSE vs Augmented NMSI** runs
-- Plot:
-  - Energy **E(t)**
-  - Enstrophy **Ω(t)**
-  - Max vorticity **‖ω‖∞**
-  - Energy spectrum **E(k)**
-- Estimate **Lyapunov exponent λ_max** via twin trajectories
+## 📂 Contents
+- `NMSI_Diagnostics_Notebook_Demo.ipynb` — Notebook with fallback to demo dataset
+- `demo_timeseries.npz` — Synthetic dataset (Energy, Enstrophy, Max Vorticity)
 
 ## 🚀 How to Run
-1. Install requirements:
+1. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 2. Launch Jupyter:
    ```bash
-   jupyter notebook NMSI_Diagnostics_Notebook.ipynb
+   jupyter notebook NMSI_Diagnostics_Notebook_Demo.ipynb
    ```
-3. Replace file paths in the notebook with your simulation outputs:
-   - `out_classical/final_timeseries.npz`
-   - `out_augmented/final_timeseries.npz`
+3. If no simulation outputs are found in `out_classical/` or `out_augmented/`,  
+   the notebook will automatically load the demo dataset.
 
-## 📂 Input Data
-The notebook expects `.npz` or `.csv` files with at least:
-- `t` (time array)
-- `E` (energy)
-- `Omega` (enstrophy)
-- `wmax` (optional: max vorticity)
-
-For spectra:  
-`spectrum_Ek.npz` with fields `k`, `Ek`.
-
-## 📊 Example Workflow
-- Run 64³ shakeout (ν=5e-4) with Classical & Augmented configs
-- Load outputs in notebook
-- Generate comparison plots
-- Run Lyapunov analysis (base vs perturbed trajectory)
-- Share results for community validation
+## 📊 Demo Dataset
+The synthetic dataset includes:
+- `t` (time array, 0–20, 200 points)
+- `E_classical`, `E_augmented`
+- `Omega_classical`, `Omega_augmented`
+- `wmax_classical`, `wmax_augmented`
 
 ## 🔬 Citation
-If you use this notebook, please cite:
+If you use this notebook or dataset, please cite:
 
 Lazarev, S. V. (2025).  
 *Solving the Millennium Problem — Navier–Stokes Regularity Under the Poincaré–Perelman_NMSI_π*–HDQG Framework.*  
