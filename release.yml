@@ -1,0 +1,73 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag (e.g., v1.2.3)'
+        required: false
+      name:
+        description: 'Release name'
+        required: false
+      draft:
+        description: 'Create as draft (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine tag/name
+        id: meta
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          fi
+          if [ -n "${{ github.event.inputs.name }}" ]; then
+            echo "name=${{ github.event.inputs.name }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=Release ${{ steps.meta.outputs.tag }}" >> $GITHUB_OUTPUT
+          fi
+          if [ -n "${{ github.event.inputs.draft }}" ]; then
+            echo "draft=${{ github.event.inputs.draft }}" >> $GITHUB_OUTPUT
+          else
+            echo "draft=false" >> $GITHUB_OUTPUT
+
+      - name: Build release bundle (docs + notebooks)
+        run: |
+          mkdir -p release_assets
+          # Collect common docs (adjust paths as needed)
+          for f in             "NMSI_NS_e_Operator_Cap1-10_EN.docx"             "NMSI_NS_e_Operator_Anexe_Tehnice_EN.docx"             "NMSI_NS_e_Operator_Anexe_Numerice_EN.docx"             "notebooks/NMSI_NS_e_Notebook_Skeleton.ipynb"; do
+            if [ -f "$f" ]; then cp "$f" release_assets/; fi
+          done
+          # Optional: include configs and README
+          for f in "config.yaml" "README.md"; do
+            if [ -f "$f" ]; then cp "$f" release_assets/; fi
+          done
+          # Zip bundle
+          cd release_assets
+          zip -r ../NMSI_NS_e_Release_${{ steps.meta.outputs.tag }}.zip .
+          cd ..
+          ls -lah
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.name }}
+          draft: ${{ steps.meta.outputs.draft }}
+          generateReleaseNotes: true
+          artifacts: |
+            NMSI_NS_e_Release_${{ steps.meta.outputs.tag }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
