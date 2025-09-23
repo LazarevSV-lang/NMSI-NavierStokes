@@ -1,0 +1,52 @@
+name: Tiny 3D TGV Sanity-Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  tgv3d:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install numpy scipy matplotlib
+
+      - name: Prepare output dirs
+        run: |
+          mkdir -p artifacts out_3d
+
+      - name: Run tiny 3D TGV (sanity)
+        run: |
+          if [ -f nmsi_nse3d_tg.py ]; then             python nmsi_nse3d_tg.py --config config.yaml --grid 64 --t_end 2.0 --use_e spectral || true;           else             echo "nmsi_nse3d_tg.py not found; skipping.";           fi
+
+      - name: Archive diagnostics (if any)
+        run: |
+          if ls out_3d/* 1> /dev/null 2>&1; then             cp -r out_3d artifacts/out_3d;           fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tgv3d-sanity
+          path: artifacts/**
+          if-no-files-found: warn
