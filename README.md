@@ -1,17 +1,9 @@
-# NMSI Exponential Operator Demo
+# NMSI Operators Demo
 
-This repository contains a minimal demonstration of the exponential operator `e` used in the
-NMSI–π*–HDQG–e framework for Navier–Stokes regularization.
+This package contains synthetic data (`demo_timeseries.npz`) and a Python notebook script (`demo_notebook.py`) 
+to visualize the comparison between Classical NSE and Augmented NSE with π*, γ_diss, and e operators.
 
-## Files
-- `exponential_operator_demo.py`: Python script implementing the exponential operator with a demo.
-- `README.md`: Project description and usage instructions.
-
-## Usage
-Run the Python file to see the exponential operator applied to a synthetic vorticity field:
-
+Usage:
 ```bash
-python exponential_operator_demo.py
+python demo_notebook.py
 ```
-
-This will print both the original and regularized values, illustrating exponential damping.
