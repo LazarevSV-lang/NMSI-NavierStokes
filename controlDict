@@ -1,0 +1,50 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+application     rhoCentralFoam;
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         0.01;
+deltaT          1e-6;
+writeControl    timeStep;
+writeInterval   200;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  7;
+writeCompression off;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable yes;
+
+functions
+{
+    fieldMinMax_vort
+    {
+        type            fieldMinMax;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        enabled         true;
+        fields          (mag(curl(U)));
+        writeControl    timeStep;
+        writeInterval   200;
+    }
+
+    volIntegrate_E
+    {
+        type            volFieldValue;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        regionType      all;
+        operation       sum;
+        name            kineticEnergy;
+        fields
+        (
+            (U magSqr)
+        );
+        writeControl    timeStep;
+        writeInterval   200;
+    }
+}

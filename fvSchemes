@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSchemes;
+}
+ddtSchemes
+{
+    default         Euler;
+}
+gradSchemes
+{
+    default         Gauss linear;
+}
+divSchemes
+{
+    default         none;
+    div(phi,U)      Gauss vanLeerV;
+    div(phi,e)      Gauss vanLeer;
+    div(phi,K)      Gauss vanLeer;
+    div(phi,omega)  Gauss vanLeer;
+    div(phi,alpha)  Gauss vanLeer;
+}
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+interpolationSchemes
+{
+    default         linear;
+}
+snGradSchemes
+{
+    default         corrected;
+}
+fluxRequired
+{
+    default         no;
+    U;
+    rho;
+    p;
+}
