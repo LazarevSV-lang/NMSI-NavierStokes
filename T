@@ -10,16 +10,29 @@ dimensions      [0 0 0 1 0 0 0];
 internalField   uniform 300;
 boundaryField
 {
-    walls
+    inlet
     {
-        type zeroGradient;
+        type            totalTemperature;
+        T0              uniform 300;
+        gamma           1.4;
+        beta            0.0;
+        value           uniform 300;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    plate
+    {
+        type            fixedValue;
+        value           uniform 300;  // isothermal plate; adjust as needed
+    }
+    farfield
+    {
+        type            zeroGradient;
     }
     frontAndBack
     {
-        type empty;
-    }
-    inletOutlet
-    {
-        type zeroGradient;
+        type            empty;
     }
 }

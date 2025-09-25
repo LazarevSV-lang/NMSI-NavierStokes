@@ -10,16 +10,24 @@ dimensions      [1 -3 0 0 0 0 0];
 internalField   uniform 1.18;
 boundaryField
 {
-    walls
+    inlet
     {
-        type zeroGradient;
+        type            zeroGradient;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    plate
+    {
+        type            zeroGradient;
+    }
+    farfield
+    {
+        type            zeroGradient;
     }
     frontAndBack
     {
-        type empty;
-    }
-    inletOutlet
-    {
-        type zeroGradient;
+        type            empty;
     }
 }
