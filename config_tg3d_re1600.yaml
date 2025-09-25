@@ -1,40 +1,5 @@
-# Taylor–Green 3D (SSPRK3, 2/3 dealias) targeting Re ~ 1600
-# Using U0 ~ 1, L ~ 1  => nu = U0*L/Re ~ 6.25e-4
-grid:
-  nx: 64
-  ny: 64
-  nz: 64
-domain:
-  Lx: 6.283185307179586   # 2*pi
-  Ly: 6.283185307179586
-  Lz: 6.283185307179586
-physics:
-  nu: 6.25e-4             # Re ~ 1600
-time:
-  t_end: 10.0
-  dt: 1.0e-3              # start conservative; tune with CFL
-integrator:
-  scheme: ssprk3
-  dealias: two_thirds
-operators:
-  pi_star:
-    enabled: true
-    A: 0.20
-    omega: 2.0
-    phi: 0.0
-    band_k: [2, 3]        # optional: inject at large scales
-  gamma_diss:
-    enabled: true
-    gamma0: 0.70
-    z_window_frac: [0.6, 0.9]
-  e_star:
-    enabled: true
-    lambda_e: 0.35
-    alpha_e: 0.20
-io:
-  outdir: out_3d
-  save_npz: true
-  save_every_n: 20
-notes:
-  - "Monitor E(t), Ω(t), ‖ω‖∞; reduce dt if CFL>0.4 or jitter appears."
-  - "For strict TG initial condition, set u0 = (sin x cos y cos z, -cos x sin y cos z, 0)."
+nx: 64
+ny: 64
+nz: 64
+nu: 6.25e-4
+t_end: 2
