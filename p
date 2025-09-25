@@ -13,25 +13,24 @@ boundaryField
     inlet
     {
         type            totalPressure;
-        p0              uniform 101325;
+        p0              uniform 1013250; // adjust per target Mach
         gamma           1.4;
         value           uniform 101325;
-    }
-    outlet
-    {
-        type            fixedValue;
-        value           uniform 101325;
-    }
-    plate
-    {
-        type            zeroGradient;
     }
     farfield
     {
         type            zeroGradient;
     }
-    frontAndBack
+    body
     {
-        type            empty;
+        type            zeroGradient;
+    }
+    axis
+    {
+        type            wedge;
+    }
+    symmetryPlane
+    {
+        type            wedge;
     }
 }

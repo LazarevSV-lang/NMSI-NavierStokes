@@ -1,0 +1,38 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      NMSIProperties;
+}
+NMSI
+{
+    active  true;
+
+    piStar
+    {
+        active  true;
+        A       0.15;
+        omega   1.6;
+        phase   0.0;
+        kx      0.5;
+        ky      0.5;
+        kz      0.0;
+    }
+
+    gammaDiss
+    {
+        active      true;
+        gamma0      0.75;
+        zStart      0.55;
+        zEnd        0.85;
+        shockMaskC  2e-3;
+    }
+
+    expClamp
+    {
+        active  true;
+        lambda  0.30;
+        alpha   0.20;
+    }
+}

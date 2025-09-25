@@ -10,7 +10,7 @@ solvers
     rho { solver diagonal; }
     U   { solver diagonal; }
     p   { solver diagonal; }
-    e   { solver diagonal; }
+    T   { solver diagonal; }
 }
 PISO
 {

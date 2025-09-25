@@ -18,21 +18,21 @@ boundaryField
         beta            0.0;
         value           uniform 300;
     }
-    outlet
-    {
-        type            zeroGradient;
-    }
-    plate
-    {
-        type            fixedValue;
-        value           uniform 300;  // isothermal plate; adjust as needed
-    }
     farfield
     {
         type            zeroGradient;
     }
-    frontAndBack
+    body
     {
-        type            empty;
+        type            fixedValue;
+        value           uniform 300;  // isothermal body (illustrative)
+    }
+    axis
+    {
+        type            wedge;
+    }
+    symmetryPlane
+    {
+        type            wedge;
     }
 }

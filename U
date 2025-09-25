@@ -7,30 +7,30 @@ FoamFile
     object      U;
 }
 dimensions      [0 1 -1 0 0 0 0];
-internalField   uniform (1800 0 0); // ~Mach 6 at ~300K for air (~a=~340m/s -> M6~2040); adjust as needed
+internalField   uniform (2500 0 0); // ~Mach 7-8 (illustrative)
 boundaryField
 {
     inlet
     {
         type            fixedValue;
-        value           uniform (1800 0 0);
-    }
-    outlet
-    {
-        type            zeroGradient;
-    }
-    plate
-    {
-        type            noSlip;
+        value           uniform (2500 0 0);
     }
     farfield
     {
         type            inletOutlet;
-        inletValue      uniform (1800 0 0);
-        value           uniform (1800 0 0);
+        inletValue      uniform (2500 0 0);
+        value           uniform (2500 0 0);
     }
-    frontAndBack
+    body
     {
-        type            empty;
+        type            noSlip;
+    }
+    axis
+    {
+        type            wedge;
+    }
+    symmetryPlane
+    {
+        type            wedge;
     }
 }

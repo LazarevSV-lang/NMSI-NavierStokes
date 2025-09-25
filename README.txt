@@ -1,20 +1,15 @@
-# FlatPlateHypersonic_NMSI (OpenFOAM case)
+# ReentryBluntBody_NMSI (OpenFOAM case)
 
-A minimal flat-plate hypersonic case wired for the **rhoCentralFoamNMSI** solver
-with **π\*** forcing, **γ_diss** (Z-window), and **e\*** clamp via `system/NMSIProperties`.
+Axisymmetric blunt-body wedge case for the **rhoCentralFoamNMSI** solver.
+Includes NMSI operators (π*, γ_diss with Z-window, e* clamp).
 
 ## Run
 ```
 blockMesh
 rhoCentralFoamNMSI
 ```
-(Keep CFL ≤ 0.4; adjust `deltaT` in `system/controlDict` accordingly.)
-
-## Outputs
-- `postProcessing/kineticEnergy/...` — integrated kinetic energy.
-- `postProcessing/fieldMinMax_vort/...` — min/max vorticity magnitude.
 
 ## Notes
-- The π* spatial pattern is TG-like; adapt `kx, ky, kz` to your geometry.
-- γ_diss is masked in compressive regions (shockMaskC) and gated in time (Z-windows).
-- e* provides global exponential stabilization; you can disable it in `NMSIProperties`.
+- Adjust inlet total pressure/temperature to match target Mach/Re (use tunnel data).
+- Strengthen shock masking (gammaDiss.shockMaskC) if π* interacts with the bow shock.
+- Validate shock standoff distance, stagnation heat flux, and Cp(θ) against experiment.
