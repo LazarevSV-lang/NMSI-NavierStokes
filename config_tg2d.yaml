@@ -1,0 +1,32 @@
+# Taylor–Green 2D surrogate (pseudo-spectral)
+grid:
+  nx: 128
+  ny: 128
+domain:
+  Lx: 6.283185307179586   # 2*pi
+  Ly: 6.283185307179586
+physics:
+  nu: 5.0e-4              # ~Re ~ 2000 for U~1, L~1 (2D surrogate)
+time:
+  t_end: 6.0
+  dt: 1.5e-3              # CFL <= 0.4 recommended
+integrator:
+  scheme: euler           # demo; use SSPRK3 in 3D
+operators:
+  pi_star:
+    enabled: true
+    A: 0.20
+    omega: 2.0
+    phi: 0.0
+  gamma_diss:
+    enabled: true
+    gamma0: 0.60
+    z_window_frac: [0.6, 0.9]   # fraction of k_max
+  e_star:
+    enabled: true
+    lambda_e: 0.40
+    alpha_e: 0.20
+io:
+  outdir: out_2d
+  save_npz: true
+  save_every_n: 20
