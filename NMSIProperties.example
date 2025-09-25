@@ -1,0 +1,49 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \      /  F ield         | NMSI properties                                 |
+|  \    /   O peration     |                                                 |
+|   \  /    A nd           |                                                 |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      NMSIProperties;
+}
+
+NMSI
+{
+    active          true;
+
+    // π* parameters
+    piStar
+    {
+        active      true;
+        A           0.20;        // amplitude
+        omega       2.0;         // angular frequency
+        phase       0.0;
+        kx          1.0;         // large-scale pattern (edit to geometry)
+        ky          1.0;
+        kz          0.0;
+    }
+
+    // γ_diss (Z-window) parameters
+    gammaDiss
+    {
+        active      true;
+        gamma0      0.70;
+        zStart      0.60;        // gate start (fraction of period)
+        zEnd        0.90;        // gate end
+        shockMaskC  1e-3;        // compression mask threshold
+    }
+
+    // e* clamp (optional; add to momentum if desired)
+    expClamp
+    {
+        active      true;
+        lambda      0.35;
+        alpha       0.20;
+    }
+}
