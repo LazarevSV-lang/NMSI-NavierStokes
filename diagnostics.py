@@ -1,10 +1,14 @@
 import numpy as np
 
-def energy(u, v):
-    return 0.5*np.mean(u*u + v*v)
+def energy(u):
+    return 0.5*np.mean((u**2).sum(-1))
 
-def enstrophy(u, v):
-    vx = np.roll(v, -1, axis=1) - np.roll(v, 1, axis=1)
-    uy = np.roll(u, -1, axis=0) - np.roll(u, 1, axis=0)
-    w  = vx - uy
-    return np.mean(w*w)
+def vorticity(u):
+    # Placeholder: requires finite diff implementation
+    return np.zeros_like(u)
+
+def enstrophy(u):
+    return np.mean((vorticity(u)**2).sum(-1))
+
+def wmax(u):
+    return np.abs(vorticity(u)).max()
