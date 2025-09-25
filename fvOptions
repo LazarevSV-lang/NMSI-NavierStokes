@@ -1,18 +1,13 @@
 FoamFile
 {
-  version     2.0;
-  format      ascii;
-  class       dictionary;
-  object      fvOptions;
+  version 2.0; format ascii; class dictionary; object fvOptions;
 }
 
-// === π* large-scale forcing ===
 piStarForcing
 {
-  type            codedSource;
-  active          true;
-  selectionMode   all;
-
+  type codedSource;
+  active true;
+  selectionMode all;
   fields (U);
 
   codeInclude
@@ -30,39 +25,37 @@ piStarForcing
     const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
     volVectorField& U        = const_cast<volVectorField&>(mesh().lookupObject<volVectorField>("U"));
 
-    const scalar A   = 0.20;   // A_pi
-    const scalar omg = 2.0;    // omega_pi
+    const scalar A   = 0.20;
+    const scalar omg = 2.0;
     const scalar t   = this->db().time().value();
 
     scalarField x = mesh().C().component(vector::X());
     scalarField y = mesh().C().component(vector::Y());
-    scalarField Sx(x.size()), Sy(y.size());
-    forAll(Sx, i) { Sx[i] = sin(x[i])*cos(y[i]); Sy[i] = -cos(x[i])*sin(y[i]); }
-
-    vectorField FpiField(Sx.size(), vector::zero);
-    forAll(FpiField, i) { FpiField[i].x() = Sx[i]; FpiField[i].y() = Sy[i]; }
+    vectorField FpiField(x.size(), vector::zero);
+    forAll(FpiField, i)
+    {
+      scalar Sx = sin(x[i])*cos(y[i]);
+      scalar Sy = -cos(x[i])*sin(y[i]);
+      FpiField[i].x() = Sx; FpiField[i].y() = Sy;
+    }
 
     volVectorField Fpi
     (
-        IOobject("Fpi", U.time().timeName(), U.db(), IOobject::NO_READ, IOobject::NO_WRITE),
-        mesh(),
-        dimensionedVector("zero", U.dimensions(), vector::zero)
+      IOobject("Fpi", U.time().timeName(), U.db(), IOobject::NO_READ, IOobject::NO_WRITE),
+      mesh(), dimensionedVector("zero", U.dimensions(), vector::zero)
     );
     Fpi.primitiveFieldRef() = FpiField;
 
     volVectorField force = A * sin(omg*t) * Fpi;
-
     this->Su(U) += rho * force;
   #};
 }
 
-// === e* exponential clamp ===
 expClamp
 {
-  type            codedSource;
-  active          true;
-  selectionMode   all;
-
+  type codedSource;
+  active true;
+  selectionMode all;
   fields (U);
 
   codeAddSup
@@ -74,17 +67,16 @@ expClamp
     const scalar alpha  = 0.20;
     const scalar t      = this->db().time().value();
     const scalar Le     = lambda*exp(-alpha*t);
+
     this->Su(U) -= rho * (Le) * U;
   #};
 }
 
-// === γ_diss Z-window selective damping ===
 gammaDiss
 {
-  type            codedSource;
-  active          true;
-  selectionMode   all;
-
+  type codedSource;
+  active true;
+  selectionMode all;
   fields (U);
 
   codeInclude
@@ -105,13 +97,17 @@ gammaDiss
     scalar omMax = gMax(omega2).value() + SMALL;
     volScalarField sensor = (omega2 - omMin)/(omMax - omMin);
 
-    const scalar gamma0 = 0.70;
-    const scalar t = this->db().time().value();
-    const scalar period = 3.14159;
-    scalar phase = fmod(t, period)/period;
-    scalar zGate = (phase > 0.6 && phase < 0.9) ? 1.0 : 0.0;
+    volScalarField divU = fvc::div(U);
+    volScalarField shockMask = pos(divU + 1e-3);
 
-    volScalarField coeff = gamma0 * sensor * zGate;
+    const scalar t = this->db().time().value();
+    const scalar period = (2.0*constant::mathematical::pi)/2.0;
+    scalar phase = fmod(t, period)/period;
+    scalar zGate = (phase > 0.60 && phase < 0.90) ? 1.0 : 0.0;
+
+    const scalar gamma0 = 0.70;
+    volScalarField coeff = gamma0 * sensor * shockMask * zGate;
+
     this->Su(U) -= rho * coeff * U;
   #};
 }
