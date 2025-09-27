@@ -1,113 +1,55 @@
-FoamFile
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \      /  F ield          | OpenFOAM: The Open Source CFD Toolbox           |
+|  \    /   O peration      | Version:  v2012 or later                        |
+|   \  /    A nd            | Web:      www.OpenFOAM.com                      |
+|    \/     M anipulation   |                                                 |
+\*---------------------------------------------------------------------------*/
+
+NMSI_forcing
 {
-  version 2.0; format ascii; class dictionary; object fvOptions;
-}
+    type codedSource;
+    active true;
 
-piStarForcing
-{
-  type codedSource;
-  active true;
-  selectionMode all;
-  fields (U);
+    selectionMode all;
+    fields (h);
 
-  codeInclude
-  #{
-    #include "fvCFD.H"
-  #};
+    codeInclude
+    #{
+        #include "fvCFD.H"
+    #};
 
-  codeOptions
-  #{
-    -std=c++17
-  #};
+    codeOptions
+    #{
+        -I$(LIB_SRC)/finiteVolume/lnInclude
+        -I$(LIB_SRC)/meshTools/lnInclude
+    #};
 
-  codeAddSup
-  #{
-    const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
-    volVectorField& U        = const_cast<volVectorField&>(mesh().lookupObject<volVectorField>("U"));
+    codeCorrect
+    #{
+    #};
 
-    const scalar A   = 0.20;
-    const scalar omg = 2.0;
-    const scalar t   = this->db().time().value();
+    codeAddSup
+    #{
+        const Time& time = mesh().time();
+        scalar t = time.value();
 
-    scalarField x = mesh().C().component(vector::X());
-    scalarField y = mesh().C().component(vector::Y());
-    vectorField FpiField(x.size(), vector::zero);
-    forAll(FpiField, i)
-    {
-      scalar Sx = sin(x[i])*cos(y[i]);
-      scalar Sy = -cos(x[i])*sin(y[i]);
-      FpiField[i].x() = Sx; FpiField[i].y() = Sy;
-    }
+        scalar A_pi = 0.35;
+        scalar w_pi = 1.2;
+        scalar beta_e = 0.03;
 
-    volVectorField Fpi
-    (
-      IOobject("Fpi", U.time().timeName(), U.db(), IOobject::NO_READ, IOobject::NO_WRITE),
-      mesh(), dimensionedVector("zero", U.dimensions(), vector::zero)
-    );
-    Fpi.primitiveFieldRef() = FpiField;
+        // Oscillatory forcing term
+        scalar piStar = A_pi * sin(w_pi*t);
+        scalar eStar = exp(-beta_e*t);
 
-    volVectorField force = A * sin(omg*t) * Fpi;
-    this->Su(U) += rho * force;
-  #};
-}
+        // Apply forcing uniformly for demonstration
+        forAll(h, celli)
+        {
+            Su[celli] += rho[celli]*Cp[celli]*piStar*eStar;
+        }
+    #};
 
-expClamp
-{
-  type codedSource;
-  active true;
-  selectionMode all;
-  fields (U);
-
-  codeAddSup
-  #{
-    const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
-    volVectorField& U        = const_cast<volVectorField&>(mesh().lookupObject<volVectorField>("U"));
-
-    const scalar lambda = 0.35;
-    const scalar alpha  = 0.20;
-    const scalar t      = this->db().time().value();
-    const scalar Le     = lambda*exp(-alpha*t);
-
-    this->Su(U) -= rho * (Le) * U;
-  #};
-}
-
-gammaDiss
-{
-  type codedSource;
-  active true;
-  selectionMode all;
-  fields (U);
-
-  codeInclude
-  #{
-    #include "fvCFD.H"
-  #};
-
-  codeAddSup
-  #{
-    const fvMesh& m = this->mesh();
-    const volScalarField& rho = m.lookupObject<volScalarField>("rho");
-    volVectorField& U        = const_cast<volVectorField&>(m.lookupObject<volVectorField>("U"));
-
-    volVectorField vort  = Foam::curl(U);
-    volScalarField omega2 = magSqr(vort);
-
-    scalar omMin = gMin(omega2).value();
-    scalar omMax = gMax(omega2).value() + SMALL;
-    volScalarField sensor = (omega2 - omMin)/(omMax - omMin);
-
-    volScalarField divU = fvc::div(U);
-    volScalarField shockMask = pos(divU + 1e-3);
-
-    const scalar t = this->db().time().value();
-    const scalar period = (2.0*constant::mathematical::pi)/2.0;
-    scalar phase = fmod(t, period)/period;
-    scalar zGate = (phase > 0.60 && phase < 0.90) ? 1.0 : 0.0;
-
-    const scalar gamma0 = 0.70;
-    volScalarField coeff = gamma0 * sensor * shockMask * zGate;
-
-    this->Su(U) -= rho * coeff * U;
-  #};
+    codeSetValue
+    #{
+    #};
 }

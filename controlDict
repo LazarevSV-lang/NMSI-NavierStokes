@@ -1,45 +1,24 @@
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       dictionary;
-    object      controlDict;
-}
-application     rhoCentralFoamNMSI;
-startFrom       startTime;
-startTime       0;
-stopAt          endTime;
-endTime         0.004;
-deltaT          5e-8;
-writeControl    timeStep;
-writeInterval   1000;
-purgeWrite      0;
-writeFormat     ascii;
-writePrecision  7;
-writeCompression off;
-timeFormat      general;
-timePrecision   6;
-runTimeModifiable yes;
-
 functions
 {
-  vortMax
-  {
-    type            fieldMinMax;
-    functionObjectLibs ("libfieldFunctionObjects.so");
-    fields          (mag(curl(U)));
-    writeControl    timeStep;
-    writeInterval   1000;
-  }
+    wallHeatFlux
+    {
+        type            wallHeatFlux;
+        libs            ("libfieldFunctionObjects.so");
+        patches         (wall);
+        regionType      patch;
+        writeControl    timeStep;
+        writeInterval   1;
+    }
 
-  kineticEnergy
-  {
-    type            volFieldValue;
-    functionObjectLibs ("libfieldFunctionObjects.so");
-    regionType      all;
-    operation       sum;
-    fields          ((U magSqr));
-    writeControl    timeStep;
-    writeInterval   1000;
-  }
+    Cp_wall
+    {
+        type            surfaceFieldValue;
+        operation       areaAverage;
+        fields          (p);
+        regionType      patch;
+        name            Cp_wall;
+        patches         (wall);
+        writeControl    timeStep;
+        writeInterval   1;
+    }
 }

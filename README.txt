@@ -1,15 +1,21 @@
-# ReentryBluntBody_NMSI (OpenFOAM case)
+# NMSI OpenFOAM Integration
 
-Axisymmetric blunt-body wedge case for the **rhoCentralFoamNMSI** solver.
-Includes NMSI operators (π*, γ_diss with Z-window, e* clamp).
+This package provides two baseline test cases (`flatPlate_M7` and `sphereCone_M8`) for testing the NMSI-π*-γ_diss-e* framework inside OpenFOAM using `rhoCentralFoam`.
 
-## Run
-```
-blockMesh
-rhoCentralFoamNMSI
-```
+### Contents
+- `fvOptions`: adds codedSource forcing with π* and e* operators
+- `controlDict`: includes wall heat flux and Cp monitors
+- Directories `0/` and `constant/` are placeholders (fill with IC/BC and mesh)
 
-## Notes
-- Adjust inlet total pressure/temperature to match target Mach/Re (use tunnel data).
-- Strengthen shock masking (gammaDiss.shockMaskC) if π* interacts with the bow shock.
-- Validate shock standoff distance, stagnation heat flux, and Cp(θ) against experiment.
+### How to Run
+1. Copy one test case (e.g. `flatPlate_M7`) into your OpenFOAM run directory.
+2. Add appropriate initial and boundary conditions to `0/` and mesh to `constant/`.
+3. Run:
+   ```bash
+   rhoCentralFoam
+   ```
+4. Post-process using wall heat flux and Cp outputs.
+
+### Notes
+- γ_diss implementation not fully coded here; extend via selective viscosity boost.
+- This is a prototype skeleton, not a full validated setup.
