@@ -4,7 +4,7 @@ def shock_bl_sensor(mach, dCp_dx, div_u, thresh=(0.15, 0.02)):
     s1 = np.clip(np.abs(dCp_dx)/thresh[0], 0.0, 1.0)
     s2 = np.clip(np.abs(np.minimum(div_u,0.0))/thresh[1], 0.0, 1.0)
     s3 = np.clip((mach-5.5)/2.0, 0.0, 1.0)
-    return np.clip(0.4*s1 + 0.4*s2 + 0.2*s3, 0.0, 1.0)
+    return np.clip(0.4*s_div := s1 + 0.0, 0.0, 1.0) * 0 + np.clip(0.4*s1 + 0.4*s2 + 0.2*s3, 0.0, 1.0)
 
 def nmsi_ops(mach, t, aoa_deg, s_sensor, params=None):
     if params is None: params = {}
