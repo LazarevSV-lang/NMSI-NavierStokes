@@ -1,28 +1,38 @@
 import numpy as np
 
-def e_operator_factor(t, lam_e=0.6, alpha_e=0.25):
-    return -lam_e * np.exp(-alpha_e * t)
+def shock_bl_sensor(mach, dCp_dx, div_u, thresh=(0.15, 0.02)):
+    s1 = np.clip(np.abs(dCp_dx)/thresh[0], 0.0, 1.0)
+    s2 = np.clip(np.abs(np.minimum(div_u,0.0))/thresh[1], 0.0, 1.0)
+    s3 = np.clip((mach-5.5)/2.0, 0.0, 1.0)
+    return np.clip(0.4*s1 + 0.4*s2 + 0.2*s3, 0.0, 1.0)
 
-def e_term_physical(u, t, lam_e=0.6, alpha_e=0.25):
-    fac = e_operator_factor(t, lam_e, alpha_e)
-    if isinstance(u, (list, tuple)):
-        return [fac * ui for ui in u]
-    return fac * u
+def nmsi_ops(mach, t, aoa_deg, s_sensor, params=None):
+    if params is None: params = {}
+    A_pi   = params.get("A_pi", 0.4)
+    w_pi   = params.get("w_pi", 1.1)
+    beta_e = params.get("beta_e", 0.03)
+    mu0    = params.get("mu0", 0.6)
+    zeta   = params.get("zeta", 6.0)
 
-def e_term_spectral(u_hat, t, lam_e=0.6, alpha_e=0.25):
-    fac = e_operator_factor(t, lam_e, alpha_e)
-    if isinstance(u_hat, (list, tuple)):
-        return [fac * uh for uh in u_hat]
-    return fac * u_hat
+    aoa_taper = 1.0 / (1.0 + 0.6*abs(aoa_deg)/10.0)
+    mach_taper = 1.0 / (1.0 + 0.15*max(mach-7.0, 0.0))
+    pi_star = (A_pi * aoa_taper * mach_taper) * np.sin(w_pi*t + np.radians(aoa_deg))
 
-def pi_star_factor(t, A_pi=0.15, omega_pi=3.5):
-    return A_pi * np.sin(omega_pi * t)
+    gate = 1.0 / (1.0 + np.exp(-zeta*(s_sensor-0.35)))
+    gamma_diss = mu0 * gate
 
-def pi_star_term(u, t, A_pi=0.15, omega_pi=3.5):
-    fac = pi_star_factor(t, A_pi, omega_pi)
-    if isinstance(u, (list, tuple)):
-        return [fac * ui for ui in u]
-    return fac * u
+    e_star = np.exp(-beta_e * t)
+    return pi_star, gamma_diss, e_star, s_sensor
 
-def pi_star_term_with_shape(f, t, A_pi=0.15, omega_pi=3.5):
-    return pi_star_factor(t, A_pi, omega_pi) * f
+def nmsi_glider_step(mach, t, aoa_deg,
+                     rho_inf, V_inf, Rn,
+                     dCp_dx, div_u,
+                     params=None, Cf_mod=0.35):
+    from .heatflux import sutton_graves_qdot
+    s = shock_bl_sensor(mach, dCp_dx, div_u)
+    pi_star, gamma_diss, e_star, s_val = nmsi_ops(mach, t, aoa_deg, s, params)
+    qdot_base = sutton_graves_qdot(rho_inf, V_inf, Rn)
+    qdot_nmsi = qdot_base * np.maximum(0.6, 1.0 - Cf_mod*gamma_diss)
+    flow_gain = (1.0 + pi_star) * (1.0 - 0.5*gamma_diss) * e_star
+    return ({"pi_star": pi_star, "gamma_diss": gamma_diss, "e_star": e_star, "sensor": s_val},
+            qdot_base, qdot_nmsi, flow_gain)

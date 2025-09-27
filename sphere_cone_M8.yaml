@@ -1,0 +1,15 @@
+case: sphere_cone_M8
+mach: 8.0
+aoa_deg: 5.0
+rho_inf: 0.015
+a_sound: 300.0
+Rn: 0.03
+dCp_dx: 0.22
+div_u: -0.04
+params:
+  A_pi: 0.30
+  w_pi: 1.1
+  beta_e: 0.035
+  mu0: 0.60
+  zeta: 6.5
+Cf_mod: 0.40

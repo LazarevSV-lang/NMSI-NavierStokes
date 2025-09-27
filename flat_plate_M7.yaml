@@ -1,0 +1,15 @@
+case: flat_plate_M7
+mach: 7.0
+aoa_deg: 3.0
+rho_inf: 0.020
+a_sound: 300.0
+Rn: 0.05
+dCp_dx: 0.18
+div_u: -0.03
+params:
+  A_pi: 0.35
+  w_pi: 1.2
+  beta_e: 0.03
+  mu0: 0.55
+  zeta: 6.0
+Cf_mod: 0.35
