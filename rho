@@ -1,33 +1,7 @@
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      rho;
-}
-dimensions      [1 -3 0 0 0 0 0];
-internalField   uniform 1.18;
+FoamFile{version 2.0; format ascii; class volScalarField; location "0"; object rho;}
+dimensions [1 -3 0 0 0 0 0];
+internalField uniform 0.018;
 boundaryField
-{
-    inlet
-    {
-        type            zeroGradient;
-    }
-    outlet
-    {
-        type            zeroGradient;
-    }
-    plate
-    {
-        type            zeroGradient;
-    }
-    farfield
-    {
-        type            zeroGradient;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
-}
+{ inlet{ type freestreamDensity; freestreamValue uniform 0.018;} 
+  outlet{ type inletOutlet; inletValue uniform 0.018; value uniform 0.018;} 
+  wall{ type zeroGradient;} wedgeMin{ type wedge;} wedgeMax{ type wedge;} }

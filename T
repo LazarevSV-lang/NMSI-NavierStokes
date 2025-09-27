@@ -1,38 +1,7 @@
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      T;
-}
-dimensions      [0 0 0 1 0 0 0];
-internalField   uniform 300;
+FoamFile{version 2.0; format ascii; class volScalarField; location "0"; object T;}
+dimensions [0 0 0 1 0 0 0];
+internalField uniform 220;
 boundaryField
-{
-    inlet
-    {
-        type            totalTemperature;
-        T0              uniform 300;
-        gamma           1.4;
-        beta            0.0;
-        value           uniform 300;
-    }
-    farfield
-    {
-        type            zeroGradient;
-    }
-    body
-    {
-        type            fixedValue;
-        value           uniform 300;  // isothermal body (illustrative)
-    }
-    axis
-    {
-        type            wedge;
-    }
-    symmetryPlane
-    {
-        type            wedge;
-    }
-}
+{ inlet{ type freestreamTotalTemperature; freestreamValue uniform 220;} 
+  outlet{ type inletOutlet; inletValue uniform 220; value uniform 220;} 
+  wall{ type fixedValue; value uniform 1000;} wedgeMin{ type wedge;} wedgeMax{ type wedge;} }

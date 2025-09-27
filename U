@@ -1,36 +1,7 @@
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       volVectorField;
-    location    "0";
-    object      U;
-}
-dimensions      [0 1 -1 0 0 0 0];
-internalField   uniform (2500 0 0); // ~Mach 7-8 (illustrative)
+FoamFile{version 2.0; format ascii; class volVectorField; location "0"; object U;}
+dimensions [0 1 -1 0 0 0 0];
+internalField uniform (2400 0 0);
 boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform (2500 0 0);
-    }
-    farfield
-    {
-        type            inletOutlet;
-        inletValue      uniform (2500 0 0);
-        value           uniform (2500 0 0);
-    }
-    body
-    {
-        type            noSlip;
-    }
-    axis
-    {
-        type            wedge;
-    }
-    symmetryPlane
-    {
-        type            wedge;
-    }
-}
+{ inlet{ type freestream; freestreamValue uniform (2400 0 0);} 
+  outlet{ type inletOutlet; inletValue uniform (2400 0 0); value uniform (2400 0 0);} 
+  wall{ type noSlip;} wedgeMin{ type wedge;} wedgeMax{ type wedge;} }

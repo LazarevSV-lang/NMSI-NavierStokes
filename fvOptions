@@ -1,1 +1,55 @@
-/* fvOptions codedSource placeholder for π*, e* forcing */
+NMSI_T_source
+{
+    type            codedSource;
+    active          true;
+    selectionMode   all;
+    fields          (e);
+
+    codeInclude
+    #{
+        #include "fvCFD.H"
+    #};
+
+    codeOptions
+    #{
+        -I$(LIB_SRC)/finiteVolume/lnInclude
+        -I$(LIB_SRC)/meshTools/lnInclude
+    #};
+
+    codeAddSup
+    #{
+        const fvMesh& mesh = this->mesh();
+        const Time& time = mesh.time();
+
+        scalar t = time.value();
+        scalar A_pi = 0.35;
+        scalar w_pi = 1.2;
+        scalar beta_e = 0.03;
+        scalar mu0 = 0.55;
+        scalar zeta = 6.0;
+        scalar s0 = 0.35;
+        scalar cap = 0.5;
+
+        volScalarField s
+        (
+            IOobject("NMSI_sensor", time.timeName(), mesh,
+                     IOobject::READ_IF_PRESENT, IOobject::NO_WRITE),
+            mesh,
+            dimensionedScalar("zero", dimless, 0.0)
+        );
+
+        volScalarField gammaD = mu0/(1.0 + exp(-zeta*(s - s0)));
+
+        scalar piStar = A_pi * sin(w_pi*t);
+        scalar eStar  = exp(-beta_e*t);
+
+        scalarField& Su = this->Su();
+        const label nCells = mesh.nCells();
+        for (label c=0; c<nCells; ++c)
+        {
+            scalar gate = (1.0 - 0.5*gammaD[c]);
+            scalar src  = cap * gate * piStar * eStar;
+            Su[c] += src;
+        }
+    #};
+}
