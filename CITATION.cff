@@ -1,20 +1,9 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite the Zenodo preprint and this repository."
-title: "NMSI–π*–HDQG Augmented Navier–Stokes — Simulation Starter"
-version: "0.1.0"
-date-released: "2025-09-20"
+title: "NMSI_Cairo_TwoFlow"
 authors:
-  - family-names: "Lazarev"
-    given-names: "Sergiu Vasili"
-    orcid: "https://orcid.org/0009-0005-3749-9735"
-repository-code: "https://github.com/LazarevSV-lang/NMSI-NavierStokes"
-url: "https://zenodo.org/records/17163066"
-preferred-citation:
-  type: report
-  title: "Solving the Millennium Problem — Navier–Stokes Regularity Under the Poincaré–Perelman_NMSI_π*–HDQG Framework"
-  authors:
-    - family-names: "Lazarev"
-      given-names: "Sergiu Vasili"
-      orcid: "https://orcid.org/0009-0005-3749-9735"
-  date-published: "2025-09-20"
-  url: "https://zenodo.org/records/17163066"
+  - family-names: Lazarev
+    given-names: Sergiu Vasili
+    orcid: https://orcid.org/0009-0005-3749-9735
+date-released: 2025-09-28
+version: "0.1.0"
+doi: 10.5281/zenodo.9999999
